@@ -17,7 +17,6 @@ router.post("/", async (req, res) => {
 
     // Create transporter
     const transporter = nodemailer.createTransport({
-      service: "gmail",
       host: "smtp.gmail.com",
       port: 587,
       secure: false,
@@ -29,7 +28,7 @@ router.post("/", async (req, res) => {
 
     // Email options
     const mailOptions = {
-      from: email,
+      from:"shivamatlas15@gmail.com" ,
       to: "shivamchaurasiya1050@gmail.com",
       subject: `New Contact Message: ${subject}`,
       html: `
