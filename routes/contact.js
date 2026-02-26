@@ -15,9 +15,9 @@ router.post("/", async (req, res) => {
     const newContact = new Contact({ name, email, subject, message });
     await newContact.save();
 
-    // Create transporter
+    // Brevo Transporter
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: "smtp-relay.brevo.com",
       port: 587,
       secure: false,
       auth: {
@@ -26,10 +26,10 @@ router.post("/", async (req, res) => {
       },
     });
 
-    // Email options
     const mailOptions = {
-      from:"shivamatlas15@gmail.com" ,
+      from: `"Portfolio Contact shivamatlas15@gmail.com`,
       to: "shivamchaurasiya1050@gmail.com",
+      replyTo: email,
       subject: `New Contact Message: ${subject}`,
       html: `
         <h3>New Contact Form Submission</h3>
@@ -42,12 +42,30 @@ router.post("/", async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    res
-      .status(201)
-      .json({ message: "Message sent successfully and email delivered ✅" });
+
+    await transporter.sendMail({
+  from: `"Shivam Chaurasiya" shivamchaurasiya1050@gmail.com`,
+  to: email,
+  replyTo:"shivamchaurasiya1050@gmail.com",
+  subject: "Thank you for contacting me",
+  html: `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+      <h2>Hi ${name},</h2>
+      <p>Thank you for reaching out through my portfolio website.</p>
+      <p>I have received your message and will get back to you as soon as possible.</p>
+      <br/>
+      <p>Best Regards,<br/><strong>Shivam Chaurasiya</strong></p>
+      <hr/>
+      <small>This is an automated response confirming your message submission.</small>
+    </div>
+  `,
+});
+
+    res.status(201).json({ message: "Message sent successfully ✅" });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error ❌" });
+    res.status(500).json({error:error, message: "Email failed ❌" });
   }
 });
 
